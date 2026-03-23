@@ -4,7 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mess Mate Live TV</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Firebase App -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBF-re7C616vvp3C3X3n6E4oS1V3F8cE",
+            authDomain: "messmate-16924.firebaseapp.com",
+            projectId: "messmate-16924",
+            storageBucket: "messmate-16924.appspot.com",
+            messagingSenderId: "1083198194520",
+            appId: "1:1083198194520:web:0d8a4e4f8f4c7f3c"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
     <style>
         :root {
             --primary: #4361ee;
@@ -322,7 +340,50 @@
         playStream(nextIndex);
     }
 
-    window.onload = loadChannels;
+    // Check premium status before loading
+    async function checkPremiumAndLoad() {
+        const messId = localStorage.getItem('messId');
+        
+        if (!messId) {
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        try {
+            const messDoc = await db.collection('messes').doc(messId).get();
+            if (messDoc.exists) {
+                const messData = messDoc.data();
+                const isPremium = messData.isPremium || false;
+                
+                if (!isPremium) {
+                    // Show premium upgrade message
+                    document.body.innerHTML = `
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#0f172a;color:#fff;font-family:'Segoe UI',sans-serif;padding:20px;text-align:center;">
+                            <i class="fas fa-tv" style="font-size:60px;color:#4361ee;margin-bottom:20px;"></i>
+                            <h2 style="margin-bottom:15px;">প্রিমিয়াম ফিচার</h2>
+                            <p style="color:#94a3b8;margin-bottom:25px;max-width:400px;line-height:1.6;">
+                                লাইভ টিভি ফিচারটি শুধুমাত্র প্রিমিয়াম সাবস্ক্রিপশনে উপলব্ধ। 
+                                টিভি চ্যানেল দেখতে প্রিমিয়াম সাবস্ক্রিপশন নিন।
+                            </p>
+                            <a href="pricing.html" style="background:linear-gradient(135deg,#4361ee,#3a0ca3);color:white;padding:15px 30px;border-radius:12px;text-decoration:none;font-weight:700;box-shadow:0 4px 15px rgba(67,97,238,0.4);">
+                                <i class="fas fa-crown"></i> প্রিমিয়াম নিন
+                            </a>
+                            <br><br>
+                            <a href="dashboard.html" style="color:#94a3b8;text-decoration:underline;">ড্যাশবোর্ডে ফিরে যান</a>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error checking premium:', error);
+        }
+        
+        // If premium, load channels
+        loadChannels();
+    }
+
+    window.onload = checkPremiumAndLoad;
 </script>
 
 </body>
