@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mess Mate Live TV</title>
+    <title>Meal Driver Live TV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <!-- Firebase App -->
@@ -11,6 +11,27 @@
     <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
+        // ========== SECURITY CODE ==========
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false;
+            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        };
+        setInterval(function() { checkDebugger(); }, 1000);
+        function checkDebugger() {
+            const start = new Date();
+            debugger;
+            const end = new Date();
+            if (end - start > 100) {
+                document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:50vh;'>Security Alert!</h1>";
+                window.location.reload();
+            }
+        }
+        console.log('%cসংবাদ:', 'color: red; font-size: 20px; font-weight: bold;', 'কোড কপি করা নিষেধ!');
+        setInterval(() => { console.clear(); }, 500);
+        // ========== END SECURITY CODE ==========
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBF-re7C616vvp3C3X3n6E4oS1V3F8cE",
@@ -209,6 +230,15 @@
 </head>
 <body>
 
+<!-- Header with Back Button -->
+<div class="header-bar" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:linear-gradient(135deg,#1e293b,#0f172a);border-bottom:1px solid rgba(255,255,255,0.1);width:100%;box-sizing:border-box;">
+    <button onclick="window.history.back()" style="background:rgba(67,97,238,0.2);border:1px solid rgba(67,97,238,0.5);color:#fff;padding:10px 18px;border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;gap:8px;transition:all 0.3s ease;">
+        <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <h2 style="margin:0;color:#fff;font-size:18px;"><i class="fas fa-tv"></i> লাইভ টিভি</h2>
+    <div style="width:80px;"></div>
+</div>
+
 <div class="tv-container">
     <div class="channel-info">
         <h3 id="now-playing">চ্যানেল লিস্ট লোড হচ্ছে...</h3>
@@ -222,6 +252,20 @@
     </div>
 
     <div class="channel-list" id="channel-grid"></div>
+
+    <!-- Adsterra Ad -->
+    <div id="ad-wrapper" style="text-align: center; margin: 20px 0; width: 100%; overflow: hidden;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '9758cc26fa330461e0a9bae6d2b2964c',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="//www.highperformanceformat.com/9758cc26fa330461e0a9bae6d2b2964c/invoke.js"></script>
+    </div>
 </div>
 
 <script>
